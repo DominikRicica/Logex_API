@@ -17,13 +17,13 @@ namespace Presentation.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
-        private readonly IItemService _itemService;
+        private readonly IEventService _eventService;
         private readonly IMapper _mapper;
         private readonly IUriService _uriService;
 
-        public EventController(IItemService itemService, IMapper mapper, IUriService uriService)
+        public EventController(IEventService eventService, IMapper mapper, IUriService uriService)
         {
-            _itemService = itemService;
+            _eventService = eventService;
             _mapper = mapper;
             _uriService = uriService;
         }
@@ -32,7 +32,7 @@ namespace Presentation.Controllers
         public IActionResult Get(int Id, [FromQuery] GetDetailQuery query)
         {
             var filter = _mapper.Map<GetDetailFilter>(query);
-            var eventResponse = _itemService.GetEventDetail(Id, filter);
+            var eventResponse = _eventService.GetEventDetail(Id, filter);
             if (eventResponse == null)
             {
                 return NotFound();
@@ -44,10 +44,10 @@ namespace Presentation.Controllers
         {
             var filter = _mapper.Map<GetListFilter>(query);
             var pagination = _mapper.Map<PaginationFilter>(paginationQuery);
-            var eventsResponse = _itemService.GetEvents(filter, pagination);
-            var totalEvents = _itemService.GetEventTotalCount(filter);
+            var eventsResponse = _eventService.GetEvents(filter, pagination);
+            var totalEvents = _eventService.GetEventTotalCount(filter);
 
-            var paginationResponse = PaginationHelpers.CreatePaginatedResponse(_uriService, pagination, eventsResponse, totalEvents);
+            var paginationResponse = PaginationHelpers.CreatePaginatedResponse(pagination, totalEvents);
             Response.Headers.Add("Pagination", JsonConvert.SerializeObject(paginationResponse));
             return Ok(eventsResponse);
         }

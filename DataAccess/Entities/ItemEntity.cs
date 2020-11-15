@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataAccess.Entities
 {
-    public class Item
+    public class ItemEntity
     {
         public int ItemId { get; set; }
         public int ItemTypeId { get; set; }
@@ -14,14 +14,14 @@ namespace DataAccess.Entities
         public string ZipCode { get; set; }
         public string Latitude { get; set; }
         public string Longitude { get; set; }
-        public List<Description> Descriptions { get; set; }
-        public List<Media> Medias { get; set; }
-        public List<WebAddress> WebAddresses { get; set; }
-        public Item()
+        public List<DescriptionEntity> Descriptions { get; set; }
+        public List<MediaEntity> Medias { get; set; }
+        public List<WebAddressEntity> WebAddresses { get; set; }
+        public ItemEntity()
         {
-            Descriptions = new List<Description>();
-            Medias = new List<Media>();
-            WebAddresses = new List<WebAddress>();
+            Descriptions = new List<DescriptionEntity>();
+            Medias = new List<MediaEntity>();
+            WebAddresses = new List<WebAddressEntity>();
         }
     }
 }

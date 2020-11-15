@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccess.Entities;
 using DataAccess.Enums;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,68 +14,10 @@ namespace DataAccess.Repository
 {
     public class ItemRepository : SqLiteBaseRepository, IItemRepository
     {
-        public IEnumerable<Item> GetEstablishments(int offset, int limit = 100, string filterName = null, string filterCity = null)
+        public ItemRepository(IConfiguration configuration) : base(configuration)
         {
-            return ListItems((int)ItemType.Establishment, filterName, filterCity, offset, limit);
         }
-
-        public IEnumerable<Item> GetEvents(int offset, int limit = 100, string filterName = null, string filterCity = null)
-        {
-            return ListItems((int)ItemType.Event, filterName, filterCity, offset, limit);
-        }
-
-        public Item GetEstablishmentDetail(int id, string languageCode = null)
-        {
-            return GetItemDetails((int)ItemType.Establishment, id, languageCode);
-        }
-
-        public Item GetEventDetail(int id, string languageCode = null)
-        {
-            return GetItemDetails((int)ItemType.Event, id, languageCode);
-        }
-
-        public int GetEstablishmentCount(string filterName = null, string filterCity = null)
-        {
-            return GetItemCount((int)ItemType.Establishment, filterName, filterCity);
-        }
-
-        public int GetEventCount(string filterName = null, string filterCity = null)
-        {
-            return GetItemCount((int)ItemType.Event, filterName, filterCity);
-        }
-
-        public IEnumerable<Item> GetEstablishmentsInRadius(decimal latitude, decimal longitude, int radius, int earthRadius)
-        {
-            return GetItemsInRadius((int)ItemType.Establishment, latitude, longitude, radius, earthRadius);
-        }
-
-        public IEnumerable<Item> GetEventsInRadius(decimal latitude, decimal longitude, int radius, int earthRadius)
-        {
-            return GetItemsInRadius((int)ItemType.Event, latitude, longitude, radius, earthRadius);
-        }
-
-        private int GetItemCount(int itemType, string filterName, string filterCity)
-        {
-            var p = new
-            {
-                ItemType = itemType,
-                FilterName = '%' + filterName + '%',
-                FilterCity = '%' + filterCity + '%',
-            };
-
-            using (var cnn = SimpleDbConnection())
-            {
-                var sql = @"SELECT COUNT(*) 
-                            FROM Items
-                            WHERE Items.ItemTypeId = @ItemType
-                                AND Items.Name like @FilterName
-                                AND Items.City like @FilterCity";
-                var count = cnn.ExecuteScalar<int>(sql, p);
-                return count;
-            }
-        }
-
-        private IEnumerable<Item> ListItems(int itemType, string filterName, string filterCity, int offset, int limit)
+        public IEnumerable<ItemEntity> ListItems(int itemType, string filterName, string filterCity, int pageNumber, int limit)
         {
             var p = new
             {
@@ -82,11 +25,10 @@ namespace DataAccess.Repository
                 FilterName = '%' + filterName + '%',
                 FilterCity = '%' + filterCity + '%',
                 Limit = limit,
-                Offset = offset * limit
+                Offset = (pageNumber - 1) * limit
             };
-            if (!File.Exists(DbFile)) return null;
 
-            using (var cnn = SimpleDbConnection())
+            using (var cnn = DbConnection())
             {
                 var sql = @"SELECT Itms.*, Descriptions.*
                             FROM (SELECT * FROM Items
@@ -95,9 +37,9 @@ namespace DataAccess.Repository
                                     AND Items.City like @FilterCity
                                     ORDER BY Items.ItemId
                                     DESC Limit @Limit Offset @Offset) Itms
-                            LEFT JOIN Descriptions ON Itm.ItemId = Descriptions.ItemId";
+                            LEFT JOIN Descriptions ON Itms.ItemId = Descriptions.ItemId";
 
-                var items = cnn.Query<Item, Description, Item>(sql, (item, description) => {
+                var items = cnn.Query<ItemEntity, DescriptionEntity, ItemEntity>(sql, (item, description) => {
                     item.Descriptions.Add(description);
                     return item;
                 }, p, splitOn: "DescriptionId");
@@ -111,7 +53,7 @@ namespace DataAccess.Repository
             }
         }
 
-        private Item GetItemDetails(int itemType, int id, string languageCode = null)
+        public ItemEntity GetItemDetails(int itemType, int id, string languageCode = null)
         {
             var p = new
             {
@@ -119,9 +61,8 @@ namespace DataAccess.Repository
                 Id = id,
                 LanguageCode = languageCode ?? "%"
             };
-            if (!File.Exists(DbFile)) return null;
 
-            using (var cnn = SimpleDbConnection())
+            using (var cnn = DbConnection())
             {
                 var sql = @"SELECT Items.*, Descriptions.*, Media.*, WebAddresses.* 
                             FROM Items
@@ -131,7 +72,7 @@ namespace DataAccess.Repository
                             WHERE Items.ItemTypeId = @ItemType
                                 AND Items.ItemId = @Id
                                 AND Descriptions.LanguageCode like @LanguageCode";
-                var items = cnn.Query<Item, Description, Media, WebAddress, Item>(sql, (item, description, media, webAdress) => {
+                var items = cnn.Query<ItemEntity, DescriptionEntity, MediaEntity, WebAddressEntity, ItemEntity>(sql, (item, description, media, webAdress) => {
                     item.Descriptions.Add(description);
                     item.Medias.Add(media);
                     item.WebAddresses.Add(webAdress);
@@ -152,7 +93,28 @@ namespace DataAccess.Repository
             };
         }
 
-        private IEnumerable<Item> GetItemsInRadius(int itemType, decimal latitude, decimal longitude, int radius, int earthRadius)
+        public int GetItemCount(int itemType, string filterName, string filterCity)
+        {
+            var p = new
+            {
+                ItemType = itemType,
+                FilterName = '%' + filterName + '%',
+                FilterCity = '%' + filterCity + '%',
+            };
+
+            using (var cnn = DbConnection())
+            {
+                var sql = @"SELECT COUNT(*) 
+                            FROM Items
+                            WHERE Items.ItemTypeId = @ItemType
+                                AND Items.Name like @FilterName
+                                AND Items.City like @FilterCity";
+                var count = cnn.ExecuteScalar<int>(sql, p);
+                return count;
+            }
+        }
+
+        public IEnumerable<ItemEntity> GetItemsInRadius(int itemType, decimal latitude, decimal longitude, int radius, int earthRadius)
         {
             var p = new
             {
@@ -162,13 +124,13 @@ namespace DataAccess.Repository
                 Radius = radius,
                 EarthRadius = earthRadius
             };
-            using (var cnn = SimpleDbConnection())
+            using (var cnn = DbConnection())
             {
                 var sql = @"SELECT *             
                             FROM Items
                             WHERE Items.ItemTypeId = @ItemType
                                 AND 2 * @EarthRadius * asin(sqrt((sin(radians((@Latitude - Items.Latitude) / 2))) ^ 2 + cos(radians(Items.Latitude)) * cos(radians(@Latitude)) * (sin(radians((@Longitude - Items.Longitude) / 2))) ^ 2)) >= @Radius";
-                var items = cnn.Query<Item>(sql,p);
+                var items = cnn.Query<ItemEntity>(sql,p);
                 var result = items.ToList();
                 return result;
             }       

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Presentation.Models
 {
-    public class DescriptionResponse
+    public class Description
     {
         public string LanguageCode { get; set; }
         public string ShortDescription { get; set; }

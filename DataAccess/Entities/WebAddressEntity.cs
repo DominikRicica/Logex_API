@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataAccess.Entities
 {
-    public class WebAddress
+    public class WebAddressEntity
     {
         public int WebAddressID { get; set; }
         public int ItemId { get; set; }

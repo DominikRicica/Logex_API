@@ -7,13 +7,9 @@ namespace DataAccess
 {
     public interface IItemRepository
     {
-        IEnumerable<Item> GetEstablishments(int offset, int limit = 100, string filterName = null, string filterCity = null);
-        IEnumerable<Item> GetEvents(int offset, int limit = 100, string filterName = null, string filterCity = null);
-        Item GetEstablishmentDetail(int id, string languageCode);
-        Item GetEventDetail(int id, string languageCode);
-        int GetEstablishmentCount(string filterName = null, string filterCity = null);
-        int GetEventCount(string filterName = null, string filterCity = null);
-        IEnumerable<Item> GetEstablishmentsInRadius(decimal latitude, decimal longitude, int radius, int earthRadius);
-        IEnumerable<Item> GetEventsInRadius(decimal latitude, decimal longitude, int radius, int earthRadius);
+        IEnumerable<ItemEntity> ListItems(int itemType, string filterName, string filterCity, int pageNumber, int limit);
+        ItemEntity GetItemDetails(int itemType, int id, string languageCode = null);
+        int GetItemCount(int itemType, string filterName, string filterCity);
+        IEnumerable<ItemEntity> GetItemsInRadius(int itemType, decimal latitude, decimal longitude, int radius, int earthRadius);
     }
 }

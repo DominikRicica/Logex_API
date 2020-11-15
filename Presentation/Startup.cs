@@ -37,7 +37,10 @@ namespace Presentation
             /***TODO DODELAT INSTALLERY***/
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
-            services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IEventService, EventService>();
+            services.AddScoped<IEstablishmentService, EstablishmentService>();
+            services.AddScoped<IEstablishmentRepository, EstablishmentRepository>();
+            services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddSwaggerGen(x =>
             {

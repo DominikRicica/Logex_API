@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Presentation.Models
 {
-    public class PagedResponse<T>
+    public class PagedResponse
     {
         public PagedResponse() { }
 
@@ -13,9 +13,5 @@ namespace Presentation.Models
         public int? PageNumber { get; set; }
 
         public int? PageSize { get; set; }
-
-        public string NextPage { get; set; }
-
-        public string PreviousPage { get; set; }
     }
 }
