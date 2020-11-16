@@ -8,9 +8,9 @@ using System.Text;
 
 namespace Business.Mapping
 {
-    public class ItemProfile : Profile
+    public class ItemProfileBO : Profile
     {
-        public ItemProfile()
+        public ItemProfileBO()
         {
             CreateMap<ItemEntity, ItemBO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ItemId))

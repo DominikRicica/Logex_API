@@ -1,11 +1,6 @@
-﻿using Presentation.Filters;
+﻿using Business.Filters;
 using Presentation.Models;
-using Presentation.Queries;
-using Presentation.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Presentation.Helpers
 {

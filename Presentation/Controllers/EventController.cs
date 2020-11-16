@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Business.Filters;
+using Business.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Presentation.Filters;
 using Presentation.Helpers;
+using Presentation.Models;
 using Presentation.Queries;
 using Presentation.Routes;
-using Presentation.Services;
+using System.Collections.Generic;
 
 namespace Presentation.Controllers
 {
@@ -19,20 +16,19 @@ namespace Presentation.Controllers
     {
         private readonly IEventService _eventService;
         private readonly IMapper _mapper;
-        private readonly IUriService _uriService;
 
-        public EventController(IEventService eventService, IMapper mapper, IUriService uriService)
+        public EventController(IEventService eventService, IMapper mapper)
         {
             _eventService = eventService;
             _mapper = mapper;
-            _uriService = uriService;
         }
 
         [HttpGet(ApiRoutes.Event.Get)]
         public IActionResult Get(int Id, [FromQuery] GetDetailQuery query)
         {
             var filter = _mapper.Map<GetDetailFilter>(query);
-            var eventResponse = _eventService.GetEventDetail(Id, filter);
+            var eventBO = _eventService.GetEventDetail(Id, filter);
+            var eventResponse = _mapper.Map<Item>(eventBO);
             if (eventResponse == null)
             {
                 return NotFound();
@@ -44,12 +40,16 @@ namespace Presentation.Controllers
         {
             var filter = _mapper.Map<GetListFilter>(query);
             var pagination = _mapper.Map<PaginationFilter>(paginationQuery);
-            var eventsResponse = _eventService.GetEvents(filter, pagination);
+
+            var eventsBOs = _eventService.GetEvents(filter, pagination);
+            var events = _mapper.Map<List<ListItem>>(eventsBOs);
+
             var totalEvents = _eventService.GetEventTotalCount(filter);
 
             var paginationResponse = PaginationHelpers.CreatePaginatedResponse(pagination, totalEvents);
             Response.Headers.Add("Pagination", JsonConvert.SerializeObject(paginationResponse));
-            return Ok(eventsResponse);
+
+            return Ok(events);
         }
     }
 }

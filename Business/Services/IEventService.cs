@@ -11,6 +11,6 @@ namespace Business.Services
         List<ListItemBO> GetEvents(GetListFilter filter, PaginationFilter pagination);
         ItemBO GetEventDetail(int id, GetDetailFilter filter);
         int GetEventTotalCount(GetListFilter filter);
-        List<ListItemBO> GetEstablishmentInRadius(int eventId, int radius);
+        List<ListItemBO> GetEstablishmentInRadius(int eventId, int radius = 1);
     }
 }

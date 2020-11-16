@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business.BusinessObjects;
 using Business.Filters;
+using Business.Helpers;
 using DataAccess.Repository;
 using System;
 using System.Collections.Generic;
@@ -25,12 +26,18 @@ namespace Business.Services
         {
             var dbEventDetail = _eventRepository.GetEventDetail(id, filter.LanguageCode);
             var eventDetail = _mapper.Map<ItemBO>(dbEventDetail);
+            StringHelper.ClearDescriptions(eventDetail.Descriptions);
+            StringHelper.RemoveYoutubeLink(eventDetail.ImageLinks);
             return eventDetail;
         }
         public List<ListItemBO> GetEvents(GetListFilter filter, PaginationFilter pagination)
         {
             var dbEvents = _eventRepository.GetEvents(pagination.PageNumber, pagination.PageSize, filter.Name, filter.City);
             var events = _mapper.Map<List<ListItemBO>>(dbEvents);
+            foreach (var e in events)
+            {
+                StringHelper.ClearDescriptions(e.Descriptions);
+            }
             return events;
         }
         public int GetEventTotalCount(GetListFilter filter)
@@ -38,7 +45,7 @@ namespace Business.Services
             var totalCount = _eventRepository.GetEventCount(filter.Name, filter.City);
             return totalCount;
         }
-        public List<ListItemBO> GetEstablishmentInRadius(int eventId, int radius)
+        public List<ListItemBO> GetEstablishmentInRadius(int eventId, int radius = 1)
         {
             var dbEvent = _eventRepository.GetEventDetail(eventId);
             var dbEstablishments = _establishmentRepository.GetEstablishmentsInRadius(Decimal.Parse(dbEvent.Latitude), Decimal.Parse(dbEvent.Longitude), radius, EarthRadius);
