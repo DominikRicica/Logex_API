@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using Presentation.Filters;
+using Business.BusinessObjects;
+using Business.Filters;
+using DataAccess.Entities;
+using Presentation.Models;
 using Presentation.Queries;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Presentation.Mapping
 {

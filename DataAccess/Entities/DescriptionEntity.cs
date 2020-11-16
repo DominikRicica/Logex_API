@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataAccess.Entities
 {
-    public class Description
+    public class DescriptionEntity
     {
         public int DescriptionId { get; set; }
         public int ItemId { get; set; }

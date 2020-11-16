@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Presentation.Models
 {
-    public class ListItemResponse
+    public class ListItem
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
-        public List<DescriptionResponse> Descriptions { get; set; }
+        public List<Description> Descriptions { get; set; }
     }
 }

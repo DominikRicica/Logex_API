@@ -1,23 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
+using Business.Mapping;
+using Business.Services;
 using DataAccess;
 using DataAccess.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Presentation.Mapping;
 using Presentation.Options;
-using Presentation.Services;
 using Serilog;
 
 namespace Presentation
@@ -34,23 +29,20 @@ namespace Presentation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /***TODO DODELAT INSTALLERY***/
             services.AddControllers();
-            services.AddAutoMapper(typeof(Startup));
-            services.AddScoped<IItemService, ItemService>();
-            services.AddScoped<IItemRepository, ItemRepository>();
+            services.AddAutoMapper(typeof(ItemProfile));
+            services.AddAutoMapper(typeof(ItemProfileBO));
+            services.AddSingleton<IEventService, EventService>();
+            services.AddSingleton<IEstablishmentService, EstablishmentService>();
+            services.AddSingleton<ILocationService, LocationService>();
+            services.AddSingleton<IEstablishmentRepository, EstablishmentRepository>();
+            services.AddSingleton<IEventRepository, EventRepository>();
+            services.AddSingleton<IItemRepository, ItemRepository>();
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title="LOGEX API", Version="v1"});
             });
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IUriService>(provider =>
-            {
-                var accessor = provider.GetRequiredService<IHttpContextAccessor>();
-                var request = accessor.HttpContext.Request;
-                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent(), "/");
-                return new UriService(absoluteUri);
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

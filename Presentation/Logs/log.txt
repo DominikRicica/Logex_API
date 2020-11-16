@@ -1,7 +1,0 @@
-2020-11-12 20:03:08.875 +01:00 [INF] HTTP GET /api/v1/events responded 200 in 1102.7821 ms
-2020-11-12 20:03:46.707 +01:00 [INF] HTTP GET /api/v1/events/413 responded 404 in 77.8605 ms
-2020-11-12 20:04:04.704 +01:00 [INF] HTTP GET /api/v1/events/413?languageCode=en responded 200 in 77.7196 ms
-2020-11-12 20:04:08.960 +01:00 [INF] HTTP GET /api/v1/events/413?languageCode=en responded 200 in 60.0925 ms
-2020-11-12 20:05:23.325 +01:00 [INF] HTTP GET /api/v1/events/413 responded 404 in 843.5698 ms
-2020-11-12 20:08:20.848 +01:00 [INF] HTTP GET /api/v1/events/413 responded 404 in 3008.2022 ms
-2020-11-12 20:13:34.550 +01:00 [INF] HTTP GET /api/v1/events/413 responded 200 in 2855.6001 ms

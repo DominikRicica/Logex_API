@@ -26,5 +26,15 @@ namespace Presentation.Routes
 
             public const string Get = Base + "/events/{Id}";
         }
+
+        public static class LocationAwarenessEvent
+        {
+            public const string GetNearEstablishments = Base + "/locationAwarenessEvent/{eventId}";
+        }
+
+        public static class LocationAwarenessEstablishment
+        {
+            public const string GetNearEvents = Base + "/locationAwarenessEstablishment/{establishmentId}";
+        }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace Presentation.Models
+namespace Business.BusinessObjects
 {
-    public class DescriptionResponse
+    public class DescriptionBO
     {
         public string LanguageCode { get; set; }
         public string ShortDescription { get; set; }
