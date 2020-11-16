@@ -27,7 +27,10 @@ namespace Presentation.Controllers
         {
             var establishmentsBOs = _eventService.GetEstablishmentInRadius(eventId);
             var establishments = _mapper.Map<List<ListItem>>(establishmentsBOs);
-
+            if (establishments.Count == 0)
+            {
+                return NotFound();
+            }
             return Ok(establishments);
         }
     }

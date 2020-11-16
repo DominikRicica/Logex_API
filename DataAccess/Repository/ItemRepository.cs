@@ -114,22 +114,17 @@ namespace DataAccess.Repository
             }
         }
 
-        public IEnumerable<ItemEntity> GetItemsInRadius(int itemType, decimal latitude, decimal longitude, int radius, int earthRadius)
+        public IEnumerable<ItemEntity> ListAll(int itemType)
         {
             var p = new
             {
                 ItemType = itemType,
-                Latitude = latitude,
-                Longitude = longitude,
-                Radius = radius,
-                EarthRadius = earthRadius
             };
             using (var cnn = DbConnection())
             {
                 var sql = @"SELECT *             
                             FROM Items
-                            WHERE Items.ItemTypeId = @ItemType
-                                AND 2 * @EarthRadius * asin(sqrt((sin(radians((@Latitude - Items.Latitude) / 2))) ^ 2 + cos(radians(Items.Latitude)) * cos(radians(@Latitude)) * (sin(radians((@Longitude - Items.Longitude) / 2))) ^ 2)) >= @Radius";
+                            WHERE Items.ItemTypeId = @ItemType";
                 var items = cnn.Query<ItemEntity>(sql,p);
                 var result = items.ToList();
                 return result;

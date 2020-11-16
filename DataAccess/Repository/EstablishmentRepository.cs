@@ -27,9 +27,9 @@ namespace DataAccess.Repository
             return GetItemCount((int)ItemType.Establishment, filterName, filterCity);
         }
 
-        public IEnumerable<ItemEntity> GetEstablishmentsInRadius(decimal latitude, decimal longitude, int radius, int earthRadius)
+        public IEnumerable<ItemEntity> GetAllEstablishments()
         {
-            return GetItemsInRadius((int)ItemType.Establishment, latitude, longitude, radius, earthRadius);
+            return ListAll((int)ItemType.Establishment);
         }
     }
 }

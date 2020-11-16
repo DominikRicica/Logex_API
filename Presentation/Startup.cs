@@ -34,6 +34,7 @@ namespace Presentation
             services.AddAutoMapper(typeof(ItemProfileBO));
             services.AddSingleton<IEventService, EventService>();
             services.AddSingleton<IEstablishmentService, EstablishmentService>();
+            services.AddSingleton<ILocationService, LocationService>();
             services.AddSingleton<IEstablishmentRepository, EstablishmentRepository>();
             services.AddSingleton<IEventRepository, EventRepository>();
             services.AddSingleton<IItemRepository, ItemRepository>();

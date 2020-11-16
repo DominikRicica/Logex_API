@@ -2,6 +2,7 @@
 using Business.BusinessObjects;
 using Business.Filters;
 using Business.Helpers;
+using DataAccess.Entities;
 using DataAccess.Repository;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,14 @@ namespace Business.Services
     {
         private readonly IEventRepository _eventRepository;
         private readonly IEstablishmentRepository _establishmentRepository;
+        private readonly ILocationService _locationService;
         private readonly IMapper _mapper;
 
-        private const int EarthRadius = 6371;
-        public EventService(IEventRepository eventRepository, IEstablishmentRepository establishmentRepository, IMapper mapper)
+        private const int MaxDistance = 1000;
+        public EventService(IEventRepository eventRepository, IEstablishmentRepository establishmentRepository, ILocationService locationService, IMapper mapper)
         {
             _eventRepository = eventRepository;
+            _locationService = locationService;
             _establishmentRepository = establishmentRepository;
             _mapper = mapper;
         }
@@ -26,6 +29,10 @@ namespace Business.Services
         {
             var dbEventDetail = _eventRepository.GetEventDetail(id, filter.LanguageCode);
             var eventDetail = _mapper.Map<ItemBO>(dbEventDetail);
+            if (eventDetail == null)
+            {
+                return null;
+            }
             StringHelper.ClearDescriptions(eventDetail.Descriptions);
             StringHelper.RemoveYoutubeLink(eventDetail.ImageLinks);
             return eventDetail;
@@ -48,7 +55,22 @@ namespace Business.Services
         public List<ListItemBO> GetEstablishmentInRadius(int eventId, int radius = 1)
         {
             var dbEvent = _eventRepository.GetEventDetail(eventId);
-            var dbEstablishments = _establishmentRepository.GetEstablishmentsInRadius(Decimal.Parse(dbEvent.Latitude), Decimal.Parse(dbEvent.Longitude), radius, EarthRadius);
+            if (dbEvent == null)
+            {
+                return null;
+            }
+            var dbEstablishments = new List<ItemEntity>(_establishmentRepository.GetAllEstablishments());
+
+            for (int i = dbEstablishments.Count - 1; i >= 0; i--)
+            {
+                var distance = _locationService.GetDistance(Double.Parse(dbEvent.Longitude), Double.Parse(dbEvent.Latitude),
+                    Double.Parse(dbEstablishments[i].Longitude), Double.Parse(dbEstablishments[i].Latitude));
+                if (distance > MaxDistance)
+                {
+                    dbEstablishments.RemoveAt(i);
+                }
+            }
+
             var establishments = _mapper.Map<List<ListItemBO>>(dbEstablishments);
             return establishments;
         }

@@ -28,6 +28,11 @@ namespace Presentation.Controllers
             var eventsBOs = _establishmentService.GetEventsInRadius(establishmentId);
             var events = _mapper.Map<List<ListItem>>(eventsBOs);
 
+            if (events.Count == 0)
+            {
+                return NotFound();
+            }
+
             return Ok(events);
         }
     }

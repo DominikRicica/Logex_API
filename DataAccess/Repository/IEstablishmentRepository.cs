@@ -10,6 +10,6 @@ namespace DataAccess.Repository
         IEnumerable<ItemEntity> GetEstablishments(int pageNumber, int limit = 100, string filterName = null, string filterCity = null);
         ItemEntity GetEstablishmentDetail(int id, string languageCode = null);
         int GetEstablishmentCount(string filterName = null, string filterCity = null);
-        IEnumerable<ItemEntity> GetEstablishmentsInRadius(decimal latitude, decimal longitude, int radius, int earthRadius);
+        IEnumerable<ItemEntity> GetAllEstablishments();
     }
 }

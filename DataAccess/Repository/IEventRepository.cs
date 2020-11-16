@@ -10,6 +10,6 @@ namespace DataAccess.Repository
         IEnumerable<ItemEntity> GetEvents(int pageNumber, int limit = 100, string filterName = null, string filterCity = null);
         ItemEntity GetEventDetail(int id, string languageCode = null);
         int GetEventCount(string filterName = null, string filterCity = null);
-        IEnumerable<ItemEntity> GetEventsInRadius(decimal latitude, decimal longitude, int radius, int earthRadius);
+        IEnumerable<ItemEntity> GetAllEvents();
     }
 }
